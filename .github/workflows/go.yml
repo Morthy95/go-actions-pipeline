@@ -32,3 +32,4 @@ jobs:
 
     - name: Test
       run: docker compose exec app go test main_test.go
+
