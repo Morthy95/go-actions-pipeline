@@ -1,11 +1,10 @@
 package controllers
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/guilhermeonrails/api-go-gin/database"
 	"github.com/guilhermeonrails/api-go-gin/models"
+	"net/http"
 )
 
 func Saudacoes(c *gin.Context) {
