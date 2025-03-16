@@ -35,6 +35,7 @@ jobs:
 
     - name: Check Docker logs
       run: docker compose logs
+        echo "Hello"
 
     - name: Test
       run: docker compose exec app go test main_test.go
