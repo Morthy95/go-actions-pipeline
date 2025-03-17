@@ -18,7 +18,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: '1.21'
+        go-version: '1.22'
         
     - name: Inicia banco
       run: docker compose up -d postgres
@@ -30,7 +30,7 @@ jobs:
         docker compose logs postgres
 
     - name: Inicia aplicação
-      run: docker compose up -d app  # Garante que o serviço "app" está rodando
+      run: sudo docker compose up -d app  # Garante que o serviço "app" está rodando
 
     - name: Verificar serviços ativos
       run: docker compose ps  # Lista os serviços em execução
