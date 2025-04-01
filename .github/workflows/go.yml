@@ -60,11 +60,9 @@ jobs:
           name: projeto_compilado 
           path: main
 
-<<<<<<< HEAD
-=======
     - name: Upload binary como artefato
       uses: actions/upload-artifact@v4
       with:
         name: go-binary
         path: ./bin/main
->>>>>>> 676ecb6 (upload de binario)
+
