@@ -30,7 +30,7 @@ jobs:
         docker compose logs postgres
 
     - name: Inicia aplicação
-      run: docker compose up -d app  # Garante que o serviço "app" está rodando
+      run: sudo docker compose up -d app  # Garante que o serviço "app" está rodando
 
     - name: Verificar serviços ativos
       run: docker compose ps  # Lista os serviços em execução
@@ -59,3 +59,4 @@ jobs:
       with: 
           name: projeto_compilado 
           path: main
+
