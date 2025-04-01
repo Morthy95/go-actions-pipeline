@@ -49,3 +49,13 @@ jobs:
         echo "Aguardando app iniciar..."
         sleep 10
         docker compose exec app go test ./...
+
+    - name: Build
+      run: |
+         go build main.go
+
+    - name: Compilar projeto
+      uses: actions/upload-artifact@v4
+      with: 
+          name: projeto_compilado 
+          path: main
