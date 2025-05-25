@@ -2,13 +2,16 @@ name: Go
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ '*']
   pull_request:
-    branches: [ "main" ]
+    branches: [ '* ']
 
 jobs:
   ci:
-    runs-on: ubuntu-latest
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: ['ubuntu-latest', 'ubuntu-18.04']
     steps:
     - uses: actions/checkout@v4
 
@@ -49,3 +52,20 @@ jobs:
         echo "Aguardando app iniciar..."
         sleep 10
         docker compose exec app go test ./...
+
+    - name: Build
+      run: |
+         go build main.go
+
+    - name: Compilar projeto
+      uses: actions/upload-artifact@v4
+      with: 
+          name: projeto_compilado 
+          path: main
+
+    - name: Upload binary como artefato
+      uses: actions/upload-artifact@v4
+      with:
+        name: go-binary
+        path: ./bin/main
+
