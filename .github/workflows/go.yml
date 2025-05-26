@@ -1,4 +1,4 @@
-ame: Go CI/CD
+Name: Go CI/CD
 
 on:
   push:
