@@ -1,10 +1,8 @@
-name: Go
+ame: Go CI/CD
 
 on:
   push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
 
 jobs:
   ci:
@@ -12,40 +10,40 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: go mod tidy
-
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
         go-version: '1.22'
         
-    - name: Inicia banco
+    - name: Install dependencies
+      run: go mod tidy
+
+    - name: Start PostgreSQL
       run: docker compose up -d postgres
 
-    - name: Aguarda o banco estar pronto
+    - name: Wait for PostgreSQL
       run: |
-        echo "Aguardando PostgreSQL iniciar..."
+        echo "Waiting for PostgreSQL..."
         sleep 10
         docker compose logs postgres
 
-    - name: Inicia aplicação
-      run: sudo docker compose up -d app  # Garante que o serviço "app" está rodando
+    - name: Start App
+      run: docker compose up -d app
 
-    - name: Verificar serviços ativos
-      run: docker compose ps  # Lista os serviços em execução
+    - name: Verify running containers
+      run: docker compose ps
 
     - name: Lint
       uses: golangci/golangci-lint-action@v6
       with:
-          version: v1.59 
-          args: controllers/ database/ models/ routes/
+        version: v1.59
+        args: ./...
 
     - name: Check Docker logs
-      run: echo "Exibindo logs do Docker..." && docker compose logs
+      run: docker compose logs
 
-    - name: Test
-      run: |
-        echo "Aguardando app iniciar..."
-        sleep 10
-        docker compose exec app go test ./...
+    - name: Run Tests
+      run: docker compose exec -T app go test -v ./...
+
+    - name: Stop services
+      run: docker compose down
