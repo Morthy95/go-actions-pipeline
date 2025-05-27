@@ -28,7 +28,7 @@ jobs:
         docker compose logs postgres
 
     - name: Start App
-      run: docker compose up -d app
+      run: sudo docker compose up -d app
 
     - name: Verify running containers
       run: docker compose ps
