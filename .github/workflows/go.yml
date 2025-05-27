@@ -25,7 +25,7 @@ jobs:
 
     - name: Aguarda o banco estar pronto
       run: |
-        echo "Aguardando PostgreSQL iniciar..."
+        echo "Aguardando PostgreSQL iniciar.."
         sleep 10
         docker compose logs postgres
 
