@@ -1,4 +1,4 @@
-name: Go
+name: Go CI
 
 on:
   push:
@@ -7,45 +7,79 @@ on:
     branches: [ "main" ]
 
 jobs:
-  ci:
+  lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: go mod tidy
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.22'
-        
-    - name: Inicia banco
-      run: docker compose up -d postgres
+      - name: Install dependencies
+        run: go mod tidy
 
-    - name: Aguarda o banco estar pronto
-      run: |
-        echo "Aguardando PostgreSQL iniciar.."
-        sleep 10
-        docker compose logs postgres
-
-    - name: Inicia aplicação
-      run: sudo docker compose up -d app  # Garante que o serviço "app" está rodando
-
-    - name: Verificar serviços ativos
-      run: docker compose ps  # Lista os serviços em execução
-
-    - name: Lint
-      uses: golangci/golangci-lint-action@v6
-      with:
-          version: v1.59 
+      - name: Run Linter
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.59
           args: controllers/ database/ models/ routes/
 
-    - name: Check Docker logs
-      run: echo "Exibindo logs do Docker..." && docker compose logs
+  build:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
 
-    - name: Test
-      run: |
-        echo "Aguardando app iniciar..."
-        sleep 10
-        docker compose exec app go test ./...
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
+
+      - name: Install dependencies
+        run: go mod tidy
+
+      - name: Start Database
+        run: docker compose up -d postgres
+
+      - name: Wait for PostgreSQL
+        run: |
+          echo "Aguardando PostgreSQL iniciar..."
+          sleep 10
+          docker compose logs postgres
+
+      - name: Start App
+        run: sudo docker compose up -d app
+
+      - name: Check Docker services
+        run: docker compose ps
+
+      - name: Check Docker logs
+        run: docker compose logs
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
+
+      - name: Install dependencies
+        run: go mod tidy
+
+      - name: Start Services
+        run: docker compose up -d
+
+      - name: Wait for App
+        run: |
+          echo "Aguardando app iniciar..."
+          sleep 10
+          docker compose ps
+
+      - name: Run Tests
+        run: docker compose exec app go test ./...
