@@ -1,13 +1,13 @@
-# Usar a imagem base do Go
-FROM golang:1.22
+FROM ubuntu:latest
 
-RUN apt-get update && apt-get install -y netcat-openbsd
+EXPOSE 8000
 
-# Configurar o diretório de trabalho
 WORKDIR /app
 
-# Copiar os arquivos da aplicação
-COPY . .
+ENV HOST=localhost PORT=5432
 
-# Comando padrão
-CMD ["go", "run", "main.go"]
+ENV USER=root PASSWORD=root DBNAME=root
+
+COPY ./main main
+
+CMD [ "./main" ]
