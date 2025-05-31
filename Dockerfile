@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM golang:1.21
 
 EXPOSE 8000
 WORKDIR /app
